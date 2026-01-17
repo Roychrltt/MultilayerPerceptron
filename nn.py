@@ -1,4 +1,5 @@
 import random
+import math
 
 
 class Value:
@@ -68,6 +69,49 @@ class Value:
         for v in reversed(topo):
             v._backward()
 
+    def log(self):
+        x = self
+        out = Value(math.log(x.data))
+
+        def _backward():
+            x.grad += (1 / x.data) * out.grad
+
+        out._prev = {x}
+        out._backward = _backward
+        return out
+
+    def exp(self):
+        x = self
+        out = Value(math.exp(x.data))
+
+        def _backward():
+            x.grad += out.data * out.grad
+
+        out._prev = {x}
+        out._backward = _backward
+        return out
+
+    def softplus(self):
+        x = self
+        if x.data >= 0:
+            out = 1 / (1 + (-x).exp())
+        else:
+            ex = x.exp()
+            out = ex / (1 + ex)
+        return out
+       
+
+    def abs(self):
+        x = self
+        out = Value(abs(x.data))
+
+        def _backward():
+            x.grad += (1 if x.data >= 0 else -1) * out.grad
+
+        out._prev = {x}
+        out._backward = _backward
+        return out
+
     def __neg__(self):
         return self * -1
 
@@ -113,7 +157,7 @@ class Neuron(Module):
 
 
     def __call__(self, x):
-        act = sum(wi * xi for wi, xi in zip(self.w, x), self.b)
+        act = sum((wi * xi for wi, xi in zip(self.w, x)), self.b)
         return act.relu() if self.nonlin else act
 
 

@@ -1,11 +1,10 @@
-from describe import read_data
-from describe import clean_data
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from nn import *
 import sys
 import pickle
+import argparse
+from nn import *
 
 
 def binary_cross_entropy(logit, y):
@@ -24,12 +23,46 @@ def softmax(logits):
     sum_exps = sum(exps)
     return [e / sum_exps for e in exps]
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Train an MLP")
+
+    parser.add_argument(
+            "--layers",
+            type=int,
+            nargs="+",
+            required=True,
+            help="MLP layer sizes, e.g. --layers 4 16 16 2"
+            )
+
+    parser.add_argument(
+            "--lr",
+            type=float,
+            default=0.01,
+            help="Learning rate"
+            )
+
+    parser.add_argument(
+            "--epochs",
+            type=int,
+            default=100,
+            help="Number of training epochs"
+            )
+
+    parser.add_argument(
+            "--seed",
+            type=int,
+            default=42,
+            help="Random seed"
+            )
+
+    return parser.parse_args()
+
 
 def main():
     if len(sys.argv) != 3:
         print("Usage: python train.py <train_set.csv> <validation_set.csv>")
         sys.exit(1)
-    
+
     train = sys.argv[1]
     val = sys.argv[2]
 
@@ -47,9 +80,9 @@ def main():
 
     X_train_norm = (X_train - min_val) / (max_val - min_val)
     X_val_norm = (X_val - min_val) / (max_val - min_val)
-    mlp = MLP(30, [16, 8, 2])
+    mlp = MLP(16, [8, 4, 2])
 
-    lr = 0.001
+    lr = 0.003
     epochs = 100
     prev_loss = 1
     patience = 5
@@ -85,32 +118,33 @@ def main():
 
         total_loss = 0.0
         correct = 0
-        
+
         for x, y in zip(X_val_norm, y_val):
             logits = mlp(x.tolist())
             probs = softmax(logits)
             loss = cross_entropy(probs, y)
             total_loss += loss.data
-            
+
             pred = 0 if probs[0].data > probs[1].data else 1
             correct += (pred == y)
         
+        print(f"correct predicts: {correct}/{len(X_val)}")
         val_loss = total_loss / len(X_val)
         val_acc = correct / len(X_val)
         val_losses.append(val_loss)
         val_accuracies.append(val_acc)
-    
+
         print(f"Epoch {epoch + 1}: train_loss={train_loss:.8f}, train_acc={train_acc:.8f}, val_loss={val_loss:.8f}, val_acc={val_acc:.8f}")
 
         if val_loss < prev_loss:
             prev_loss = val_loss
             wait = 0
             model_data = {
-                "input": 30,
-                "layers": [16, 8, 2],
-                "weights": [p.data for p in mlp.parameters()]
-            }
-            with open("model.pkl", "wb") as f:
+                    "input": 16,
+                    "layers": [8, 4, 2],
+                    "weights": [p.data for p in mlp.parameters()]
+                    }
+            with open("data/model.pkl", "wb") as f:
                 pickle.dump(model_data, f)
         else:
             wait += 1
@@ -119,7 +153,7 @@ def main():
             print(f"Early stopping as epoch {epoch + 1}")
             break
 
-    print("\033[1;92m✔ Training phase finished. Model data saved to model.pkl\033[0m")
+    print("\033[1;92m✔ Training phase finished. Model data saved to data/model.pkl\033[0m")
     epochs_range = range(len(train_losses))
     plt.figure(figsize=(12,5))
 

@@ -6,9 +6,9 @@ from train import softmax
 import numpy as np
 
 def main():
-    mlp = MLP(30, [16, 8, 2])
+    mlp = MLP(16, [8, 4, 2])
 
-    with open("model.pkl", "rb") as f:
+    with open("data/model.pkl", "rb") as f:
         model_data = pickle.load(f)
     
     mlp = MLP(
@@ -19,7 +19,7 @@ def main():
     for p, w in zip(mlp.parameters(), model_data["weights"]):
         p.data = w
 
-    test_df = pd.read_csv("data/test.csv")
+    test_df = pd.read_csv("data/val.csv")
     X_test = test_df.iloc[:, 1:].values
     y_test = test_df.iloc[:, 0].values
     min_val = X_test.min(axis=0)
@@ -29,6 +29,7 @@ def main():
 
     correct = 0
     total_loss = 0.0
+    e = 1e-8
 
     for x, y in zip(X_test_norm, y_test):
         logits = mlp(x.tolist())
@@ -38,7 +39,7 @@ def main():
         correct += (pred == y)
 
         p1 = probs[1].data
-        total_loss += -(y * np.log(p1) + (1 - y) * np.log(1 - p1))
+        total_loss += -(y * np.log(p1 + e) + (1 - y) * np.log(1 - p1 + e))
 
     accuracy = correct / len(X_test_norm)
     loss = total_loss / len(X_test_norm)

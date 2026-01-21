@@ -51,7 +51,7 @@ def data_describe(df):
     fig.legend(handles, labels, loc="upper right")
 
     plt.tight_layout()
-    #plt.show()
+    plt.show()
 
 
 def clean_data(df):
@@ -63,32 +63,27 @@ def clean_data(df):
 def data_split_and_save(df, seed=0):
     np.random.seed(seed)
     idx = np.random.permutation(len(df))
-    split1 = int(0.70 * len(df))
-    split2 = int(0.15 * len(df))
+    split = int(0.8 * len(df))
 
-
-    train_idx = idx[:split1]
-    val_idx = idx[split1:split1 + split2]
-    test_idx = idx[split1 + split2:]
+    train_idx = idx[:split]
+    val_idx = idx[split:]
 
     df_train = df.iloc[train_idx]
     df_val = df.iloc[val_idx]
-    df_test = df.iloc[test_idx]
     
-    os.makedirs("data", exist_ok=True)
+    os.makedirs("./data", exist_ok=True)
     df_train.to_csv("./data/train.csv", index=False)
     df_val.to_csv("./data/val.csv", index=False)
-    df_test.to_csv("./data/test.csv", index=False)
     
 
 def main():
-    filename = "data.csv"
+    filename = "./data/data.csv"
     df = read_data(filename)
     data_describe(df)
     df = clean_data(df)
-    data_split_and_save(df)
+    data_split_and_save(df, 33)
     print("\033[1;92m✔ Data visualization and split done.\033[0m")
-    print("\033[1;92mSplit data saved as data/train.csv, data/val.csv, and data/test.csv\033[0m")
+    print("\033[1;92mSplit data saved as data/train.csv ans data/val.csv\033[0m")
  
 
 if __name__ == "__main__":

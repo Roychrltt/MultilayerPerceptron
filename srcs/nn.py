@@ -69,12 +69,12 @@ class Value:
         for v in reversed(topo):
             v._backward()
 
-    def log(self):
+    def log(self, e=1e-8):
         x = self
-        out = Value(math.log(x.data))
+        out = Value(math.log(x.data + e))
 
         def _backward():
-            x.grad += (1 / x.data) * out.grad
+            x.grad += (1 / (x.data + e)) * out.grad
 
         out._prev = {x}
         out._backward = _backward
@@ -151,6 +151,7 @@ class Module:
 class Neuron(Module):
 
     def __init__(self, nin, nonlin=True):
+        random.seed(33)
         self.w = [Value(random.uniform(-1, 1)) for _ in range(nin)]
         self.b = Value(0)
         self.nonlin = nonlin

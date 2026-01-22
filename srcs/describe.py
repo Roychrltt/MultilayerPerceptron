@@ -51,7 +51,7 @@ def data_describe(df):
     fig.legend(handles, labels, loc="upper right")
 
     plt.tight_layout()
-    plt.show()
+    #plt.show()
 
 
 def clean_data(df):
@@ -81,7 +81,7 @@ def main():
     df = read_data(filename)
     data_describe(df)
     df = clean_data(df)
-    data_split_and_save(df, 1)
+    data_split_and_save(df, 10)
     print("\033[1;92m✔ Data visualization and split done.\033[0m")
     print("\033[1;92mSplit data saved as data/train.csv ans data/val.csv\033[0m")
  

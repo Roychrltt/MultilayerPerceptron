@@ -6,6 +6,7 @@ import os
 
 def read_data(filename):
     """Read data in csv with pandas and return the df"""
+    print(pd.__version__)
     df = pd.read_csv(filename, header=None)
     df = df.drop(df.columns[0], axis=1)
     cols = ["label"] + [f"No.{i}" for i in range (1, 31)]
@@ -20,7 +21,7 @@ def data_describe(df):
     print(df.describe())
     pd.reset_option("display.max_columns")
     print(df.iloc[:, 0].value_counts())
-
+        
     mask_M = df["label"] == 1
     mask_B = df["label"] == 0
     fig, axes = plt.subplots(5, 6, figsize=(18, 10))
@@ -46,6 +47,13 @@ def data_describe(df):
         )
 
         ax.set_title(col)
+        if not pd.api.types.is_numeric_dtype(df[col]):
+            print(f"Column '{col}' is not numeric and will be dropped.")
+            continue
+
+        if df[col].isna().any():
+            print(f"Column '{col}' contains NaNs and will be dropped.")
+            continue
     
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="upper right")

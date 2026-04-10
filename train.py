@@ -68,7 +68,7 @@ def main():
             batch_loss = Value(0.0)
 
             for x, y in zip(X_batch, y_batch):
-                x_vals = [Value(float(v)) for v in x]   # 🔥 THIS LINE
+                x_vals = [Value(float(v)) for v in x]
                 logits = mlp(x_vals)
                 probs = softmax(logits)
                 loss = cross_entropy(probs, y)

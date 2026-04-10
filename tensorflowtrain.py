@@ -26,3 +26,4 @@ model.fit(X_train, y_train, batch_size=32, epochs=20)
 
 proba = model.predict(X_val)
 
+print(proba)

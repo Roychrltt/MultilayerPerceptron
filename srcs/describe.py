@@ -11,7 +11,7 @@ def read_data(filename):
     df = df.drop(df.columns[0], axis=1)
     cols = ["label"] + [f"No.{i}" for i in range (1, 31)]
     df.columns = cols
-    df.iloc[:, 0] = df.iloc[:, 0].map({"M":1, "B":0})
+    df[df.columns[0]] = df.iloc[:, 0].map({"M":1, "B":0})
     return df
 
 
@@ -59,7 +59,7 @@ def data_describe(df):
     fig.legend(handles, labels, loc="upper right")
 
     plt.tight_layout()
-    #plt.show()
+    plt.show()
 
 
 def clean_data(df):

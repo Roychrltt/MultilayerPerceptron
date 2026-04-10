@@ -6,4 +6,6 @@ model
 
 *.csv
 
+__pycache__
+
 model*

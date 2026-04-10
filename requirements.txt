@@ -9,3 +9,5 @@ torch
 tensorflow
 
 scipy
+
+scikit-learn

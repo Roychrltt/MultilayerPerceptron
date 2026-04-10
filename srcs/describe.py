@@ -4,6 +4,7 @@ import numpy as np
 import os
 import sys
 from scipy import stats
+from sklearn.preprocessing import StandardScaler
 
 
 class Color:
@@ -143,7 +144,12 @@ def data_split_and_save(df, output_dir='data'):
     df_train = df.iloc[train_idx]
     df_val = df.iloc[val_idx]
     df_test = df.iloc[test_idx]
+    scaler = StandardScaler()
+    scaler.fit(df_train.iloc[:, 1:])
     
+    df_train.iloc[:, 1:] = scaler.transform(df_train.iloc[:, 1:])
+    df_val.iloc[:, 1:] = scaler.transform(df_val.iloc[:, 1:])
+    df_test.iloc[:, 1:] = scaler.transform(df_test.iloc[:, 1:])
     df_train.to_csv("train.csv", index=False, header=False)
     df_val.to_csv("val.csv", index=False, header=False)
     df_test.to_csv("test.csv", index=False, header=False)

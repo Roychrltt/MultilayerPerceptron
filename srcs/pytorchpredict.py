@@ -3,7 +3,7 @@ import pandas as pd
 from torch.utils.data import DataLoader, TensorDataset
 from pytorchtrain import MLP, load_and_tensorize, Color
 
-def evaluate_on_test(model_path="model/best_model.pth", test_path="data/test.csv", hidden_config=[64, 32, 16]):
+def evaluate_on_test(model_path="model/best_model.pth", test_path="data/test.csv", hidden_config=[64, 64, 32]):
     """ Loads model and tests the model's prediction accuracy. """
     X_test, y_test = load_and_tensorize(test_path)
     test_loader = DataLoader(TensorDataset(X_test, y_test), batch_size=32)

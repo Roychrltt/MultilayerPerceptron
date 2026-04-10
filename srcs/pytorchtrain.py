@@ -88,7 +88,7 @@ def _plot_results(history):
     plt.show()
 
 
-def train_model(hidden_config=[64, 32, 16]):
+def train_model(hidden_config=[64, 64, 32]):
     X_train, y_train = load_and_tensorize("data/train.csv")
     X_val, y_val = load_and_tensorize("data/val.csv")
 

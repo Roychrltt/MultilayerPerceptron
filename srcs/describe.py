@@ -150,9 +150,9 @@ def data_split_and_save(df, output_dir='data'):
     df_train.iloc[:, 1:] = scaler.transform(df_train.iloc[:, 1:])
     df_val.iloc[:, 1:] = scaler.transform(df_val.iloc[:, 1:])
     df_test.iloc[:, 1:] = scaler.transform(df_test.iloc[:, 1:])
-    df_train.to_csv("train.csv", index=False, header=False)
-    df_val.to_csv("val.csv", index=False, header=False)
-    df_test.to_csv("test.csv", index=False, header=False)
+    df_train.to_csv("data/train.csv", index=False, header=False)
+    df_val.to_csv("data/val.csv", index=False, header=False)
+    df_test.to_csv("data/test.csv", index=False, header=False)
     print(f'{Color.GREEN}Data preprocessing finished. Results saved to data/train.csv, data/val.csv, and data/test.csv.{Color.END}')
     
 

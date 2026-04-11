@@ -9,6 +9,13 @@ import joblib
 import os
 
 
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+    print("M1 GPU is ready!")
+else:
+    device = torch.device("cpu")
+
+
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-4
 WEIGHT_DECAY = 1e-5
@@ -101,7 +108,7 @@ def train_model(hidden_config=[64, 64, 32]):
     train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(TensorDataset(X_val, y_val), batch_size=BATCH_SIZE)
 
-    model = MLP(input_size=X_train.shape[1], hidden_layers=hidden_config)
+    model = MLP(input_size=X_train.shape[1], hidden_layers=hidden_config).to(device)
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
@@ -116,6 +123,7 @@ def train_model(hidden_config=[64, 64, 32]):
         model.train()
         train_loss, train_acc = 0, 0
         for x, y in train_loader:
+            x, y = x.to(device), y.to(device)
             optimizer.zero_grad()
             logits = model(x).squeeze(1)
             loss = criterion(logits, y)
@@ -130,6 +138,7 @@ def train_model(hidden_config=[64, 64, 32]):
         val_loss, val_acc = 0, 0
         with torch.no_grad():
             for x, y in val_loader:
+                x, y = x.to(device), y.to(device)
                 logits = model(x).squeeze(1)
                 val_loss += criterion(logits, y).item() * x.size(0)
                 preds = (torch.sigmoid(logits) > 0.5).float()

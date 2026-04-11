@@ -102,9 +102,12 @@ def train_model(hidden_config=[64, 64, 32]):
     X_val, y_val = load_and_tensorize("data/val.csv")
 
     scaler = StandardScaler()
-    X_train = torch.tensor(scaler.fit_transform(X_train), dtype=torch.float32)
-    X_val = torch.tensor(scaler.transform(X_val), dtype=torch.float32)
+    X_train = torch.tensor(scaler.fit_transform(X_train), dtype=torch.float32).to(device)
+    X_val = torch.tensor(scaler.transform(X_val), dtype=torch.float32).to(device)
+    y_train = y_train.to(device)
+    y_val = y_val.to(device)
     joblib.dump(scaler, 'data/scaler.joblib')
+
     train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(TensorDataset(X_val, y_val), batch_size=BATCH_SIZE)
 
@@ -123,7 +126,6 @@ def train_model(hidden_config=[64, 64, 32]):
         model.train()
         train_loss, train_acc = 0, 0
         for x, y in train_loader:
-            x, y = x.to(device), y.to(device)
             optimizer.zero_grad()
             logits = model(x).squeeze(1)
             loss = criterion(logits, y)
@@ -138,7 +140,6 @@ def train_model(hidden_config=[64, 64, 32]):
         val_loss, val_acc = 0, 0
         with torch.no_grad():
             for x, y in val_loader:
-                x, y = x.to(device), y.to(device)
                 logits = model(x).squeeze(1)
                 val_loss += criterion(logits, y).item() * x.size(0)
                 preds = (torch.sigmoid(logits) > 0.5).float()

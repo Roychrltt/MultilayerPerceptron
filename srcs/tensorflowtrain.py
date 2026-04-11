@@ -4,12 +4,13 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import joblib
 from sklearn.preprocessing import StandardScaler
 
 
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 MAX_EPOCHS = 100
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 5e-4
 
 
 def build_dynamic_model(input_shape, hidden_layers=[64, 32, 16]):
@@ -61,6 +62,9 @@ def train_tensorflow_model(hidden_config=[64, 32, 16]):
     X_train, y_train = train_df.iloc[:, 1:].values, train_df.iloc[:, 0].values
     X_val, y_val = val_df.iloc[:, 1:].values, val_df.iloc[:, 0].values
 
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_val = scaler.transform(X_val)
     model = build_dynamic_model(input_shape=X_train.shape[1], hidden_layers=hidden_config)
     model.summary()
 

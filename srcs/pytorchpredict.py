@@ -2,10 +2,13 @@ import torch
 import pandas as pd
 from torch.utils.data import DataLoader, TensorDataset
 from pytorchtrain import MLP, load_and_tensorize, Color
+import joblib
 
-def evaluate_on_test(model_path="model/best_model.pth", test_path="data/test.csv", hidden_config=[64, 64, 32]):
+def evaluate_on_test(model_path="model/best_model.pth", test_path="data/test.csv", scaler_path="data/scaler.joblib", hidden_config=[64, 64, 32]):
     """ Loads model and tests the model's prediction accuracy. """
     X_test, y_test = load_and_tensorize(test_path)
+    scaler = joblib.load(scaler_path)
+    X_test = torch.tensor(scaler.transform(X_test), dtype=torch.float32)
     test_loader = DataLoader(TensorDataset(X_test, y_test), batch_size=32)
 
     model = MLP(input_size=X_test.shape[1], hidden_layers=hidden_config)
@@ -27,8 +30,7 @@ def evaluate_on_test(model_path="model/best_model.pth", test_path="data/test.csv
             all_preds.extend(preds.numpy())
 
     accuracy = total_correct / len(y_test)
-    print(f"✅ Evaluation Complete!")
-    print(f"📊 Test Accuracy: {accuracy * 100:.2f}%")
+    print(f"Test Accuracy: {accuracy * 100:.2f}%")
     
     return all_preds
 

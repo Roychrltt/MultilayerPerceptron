@@ -4,6 +4,8 @@ import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
 from torch.utils.data import TensorDataset, DataLoader
+from sklearn.preprocessing import StandardScaler
+import joblib
 import os
 
 
@@ -92,6 +94,10 @@ def train_model(hidden_config=[64, 64, 32]):
     X_train, y_train = load_and_tensorize("data/train.csv")
     X_val, y_val = load_and_tensorize("data/val.csv")
 
+    scaler = StandardScaler()
+    X_train = torch.tensor(scaler.fit_transform(X_train), dtype=torch.float32)
+    X_val = torch.tensor(scaler.transform(X_val), dtype=torch.float32)
+    joblib.dump(scaler, 'data/scaler.joblib')
     train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(TensorDataset(X_val, y_val), batch_size=BATCH_SIZE)
 

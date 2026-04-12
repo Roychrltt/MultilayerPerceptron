@@ -3,7 +3,7 @@ A fully vectorized Multi-Layer Perceptron (MLP) built from scratch using **NumPy
  
 > **Peak accuracy: 98%** — achieved with data scaling, feature selection, and hyperparameter tuning.
  
----
+
 ## The Custom Engine (`nn.py`)
  
 The heart of the project is a **scalar-free, fully vectorized autograd engine** — no loops over individual samples. The `Value` class wraps NumPy arrays and tracks computational graphs for automatic differentiation.
@@ -21,7 +21,7 @@ Supported operations with backward passes:
 | Mean (scalar reduction) | `mean()` |
 The `MLP` class stacks `Layer` objects, each initialised with He initialisation (`√(2/n_in)`) and optional ReLU activation. The output layer is linear (logits), with the loss function handling the sigmoid internally for numerical stability.
  
----
+
 ## Quickstart
  
 ### 1. Preprocess the data
@@ -76,7 +76,6 @@ python tensorflowpredict.py
 | Normalisation | Z-score standardisation (mean/std computed on train set only) |
 | Split | 70% train / 15% val / 15% test, random permutation |
  
----
  ## Model Comparison
  
 | Implementation | Framework | Key features |
@@ -87,7 +86,6 @@ python tensorflowpredict.py
  
 All three implementations use the same network topology (configurable hidden layers), the same train/val/test split, and StandardScaler normalisation.
  
----
 
 ## Requirements
 All dependencies are listed in ``requirements.txt``. A script ``venv.sh`` is provided to simplify the installation and create a virtual environment for the program.
@@ -97,7 +95,6 @@ chmod 755 venv.sh
 ./venv.sh
 ```
  
----
 
 ## Results
  

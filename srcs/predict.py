@@ -1,51 +1,50 @@
 import pickle
-import pandas
-from nn import *
 import pandas as pd
-from train import softmax
 import numpy as np
+from nn import *
+from train import softmax
+
+class Color:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
 
 def main():
-    mlp = MLP(16, [8, 4, 2])
+    try:
+        with open("model/model.pkl", "rb") as f:
+            model_data = pickle.load(f)
+    except FileNotFoundError:
+        print(f"{Color.RED}Error: model/model.pkl not found. Run train.py first. {Color.END}")
+        return
+    test_df = pd.read_csv("data/val.csv", header=None)
+    X_test = test_df.iloc[:, 1:].values
+    y_test = test_df.iloc[:, 0].values.reshape(-1, 1)
 
-    with open("data/model.pkl", "rb") as f:
-        model_data = pickle.load(f)
-    
-    mlp = MLP(
-        model_data["input"],
-        model_data["layers"]
-    )
-
+    X_test = (X_test - model_data["mean"]) / model_data["std"]
+    mlp = MLP(X_test.shape[1], model_data["layers"])
+   
     for p, w in zip(mlp.parameters(), model_data["weights"]):
         p.data = w
 
-    test_df = pd.read_csv("data/val.csv")
-    X_test = test_df.iloc[:, 1:].values
-    y_test = test_df.iloc[:, 0].values
-    min_val = X_test.min(axis=0)
-    max_val = X_test.max(axis=0)
+    logits = mlp(Value(X_test))
 
-    X_test_norm = (X_test - min_val) / (max_val - min_val)
+    predictions = (logits.data > 0).astype(int)
+    accuracy = np.mean(predictions == y_test)
 
-    correct = 0
-    total_loss = 0.0
-    e = 1e-8
+    x = logits.data
+    loss_matrix = np.maximum(0, x) - x * y_test + np.log(1 + np.exp(-np.abs(x)))
+    test_loss = np.mean(loss_matrix)
 
-    for x, y in zip(X_test_norm, y_test):
-        logits = mlp(x.tolist())
-        probs = softmax(logits)
-
-        pred = 0 if probs[0].data > probs[1].data else 1
-        correct += (pred == y)
-
-        p1 = probs[1].data
-        total_loss += -(y * np.log(p1 + e) + (1 - y) * np.log(1 - p1 + e))
-
-    accuracy = correct / len(X_test_norm)
-    loss = total_loss / len(X_test_norm)
-
-    print("Test accuracy:", accuracy)
-    print("Test BCE loss:", loss)
+    print(f"{Color.GREEN}Test Results:")
+    print(f"   Accuracy: {accuracy * 100:.2f}%")
+    print(f"   BCE Loss: {test_loss:.6f}{Color.END}")
 
 
 if __name__ == "__main__":

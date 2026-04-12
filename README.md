@@ -43,8 +43,8 @@ This will:
  
 ```bash
 python train.py data/train.csv data/val.csv \
-    --layers 64 32 1 \
-    --lr 0.01 \
+    --layers 64 64 32 1 \
+    --lr 0.005 \
     --epochs 100 \
     --patience 10
 ```
@@ -66,7 +66,6 @@ python tensorflowtrain.py
 python tensorflowpredict.py
 ```
  
----
 ## Data Preprocessing (`describe.py`)
  
 | Step | Detail |

@@ -40,6 +40,7 @@ This will:
 - Drop statistically noisy features via the **Mann-Whitney U test** 🔍
 - Split data 70 / 15 / 15 into `data/train.csv`, `data/val.csv`, `data/test.csv` ✂️
 
+ ![preprocess](images/preprocess.png)
 ### 2. Train the custom MLP 🔁
  ![curve](images/losscurve.png)
 ```bash

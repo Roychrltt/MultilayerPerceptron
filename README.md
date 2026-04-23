@@ -25,7 +25,9 @@ The `MLP` class stacks `Layer` objects, each initialised with He initialisation 
 ## 🏎️ Quickstart
  
 ### 1. Preprocess the data 🧹
+
  ![data](images/data.png)
+ 
 ```bash
 # Optional: visualise feature distributions
 python3 srcs/describe.py data.csv --visual

@@ -25,6 +25,9 @@ The `MLP` class stacks `Layer` objects, each initialised with He initialisation 
 ## 🏎️ Quickstart
  
 ### 1. Preprocess the data 🧹
+
+ ![data](images/data.png)
+ 
 ```bash
 # Optional: visualise feature distributions
 python3 srcs/describe.py data.csv --visual
@@ -38,7 +41,7 @@ This will:
 - Split data 70 / 15 / 15 into `data/train.csv`, `data/val.csv`, `data/test.csv` ✂️
 
 ### 2. Train the custom MLP 🔁
- ![curve](images/curves.png)
+
 ```bash
 python3 srcs/train.py data/train.csv data/val.csv \
     --layers 64 64 32 1 \

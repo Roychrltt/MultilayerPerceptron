@@ -41,7 +41,7 @@ This will:
 - Split data 70 / 15 / 15 into `data/train.csv`, `data/val.csv`, `data/test.csv` ✂️
 
 ### 2. Train the custom MLP 🔁
- ![curve](images/curves.png)
+ ![curve](images/losscurve.png)
 ```bash
 python3 srcs/train.py data/train.csv data/val.csv \
     --layers 64 64 32 1 \

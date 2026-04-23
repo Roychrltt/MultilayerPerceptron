@@ -27,9 +27,8 @@ The `MLP` class stacks `Layer` objects, each initialised with He initialisation 
 ### 1. Preprocess the data 🧹
  
 ```bash
-python describe.py data.csv
 # Optional: visualise feature distributions
-python describe.py data.csv --visual
+python3 srcs/describe.py data.csv --visual
 ```
  
 This will:
@@ -42,7 +41,7 @@ This will:
 ### 2. Train the custom MLP 🔁
  
 ```bash
-python train.py data/train.csv data/val.csv \
+python3 srcs/train.py data/train.csv data/val.csv \
     --layers 64 64 32 1 \
     --lr 0.005 \
     --epochs 100 \
@@ -54,16 +53,16 @@ The best model (lowest validation loss) is saved to `model/model.pkl`.💾 Loss 
 ### 3. Evaluate 🔎
  
 ```bash
-python predict.py
+python3 srcs/predict.py
 ```
 ### 4. (Optional) Train PyTorch or TensorFlow versions 🤖
  
 ```bash
-python pytorchtrain.py
-python pytorchpredict.py
+python3 srcs/pytorchtrain.py
+python3 srcs/pytorchpredict.py
  
-python tensorflowtrain.py
-python tensorflowpredict.py
+python3 srcs/tensorflowtrain.py
+python3 srcs/tensorflowpredict.py
 ```
  
 ## 🧪 Data Preprocessing (`describe.py`)
